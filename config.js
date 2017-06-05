@@ -56,7 +56,7 @@ module.exports = () => {
         case 'development':
             return {
                 'secret': '?D7wPLY2\=z3',
-                'dbURI': 'mongodb://127.0.0.1:27017/cpraa',
+                'dbURI': 'mongodb://127.0.0.1:27017/admn',
                 'dbUser': 'cpraa_admin',
                 'dbPass': 'quengetz!*2412',
                 'rights': rights,
@@ -86,7 +86,7 @@ module.exports = () => {
         case 'test':
             return {
                 'secret': '?D7wPLY2\=z3',
-                'dbURI': 'mongodb://mongo:27017/cpraa',
+                'dbURI': 'mongodb://mongo:27017/admn',
                 'dbUser': 'cpraa_admin',
                 'dbPass': 'bAkMTCsRZxHI29',
                 'rights': rights,
@@ -106,11 +106,11 @@ module.exports = () => {
                     "hydra": {
                         "serviceName": "admin-service",
                         "serviceIP": "",
-                        "servicePort": 5000,
+                        "servicePort": 0,
                         "serviceType": "",
                         "serviceDescription": "",
                         "redis": {
-                            "url": "127.0.0.1",
+                            "url": "redis",
                             "port": 6379,
                             "db": 15
                         }
@@ -121,7 +121,7 @@ module.exports = () => {
         case 'production':
             return {
                 'secret': ':slHUl?V]d(-$JnW+_&S',
-                'dbURI': 'mongodb://mongo:27017/cpraa',
+                'dbURI': 'mongodb://mongo:27017/admn',
                 'dbUser': 'cpraa_admin',
                 'dbPass': 'qI3wOLlhIlu4AMvn',
                 'rights': rights,
@@ -141,11 +141,11 @@ module.exports = () => {
                     "hydra": {
                         "serviceName": "admin-service",
                         "serviceIP": "",
-                        "servicePort": 5000,
+                        "servicePort": 0,
                         "serviceType": "",
                         "serviceDescription": "",
                         "redis": {
-                            "url": "127.0.0.1",
+                            "url": "redis",
                             "port": 6379,
                             "db": 15
                         }
@@ -156,7 +156,7 @@ module.exports = () => {
         default:
             return {
                 'secret': '?D7wPLY2\=z3',
-                'dbURI': 'mongodb://127.0.0.1:27017/cpraa',
+                'dbURI': 'mongodb://127.0.0.1:27017/admn',
                 'dbUser': 'cpraa_admin',
                 'dbPass': 'quengetz!*2412',
                 'rights': rights,

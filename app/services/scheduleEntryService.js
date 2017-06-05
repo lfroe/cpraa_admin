@@ -2,7 +2,6 @@
  * Created by lukas on 09/04/2017.
  */
 const ScheduleEntry = require('../models/scheduleEntry');
-const msHelper = require('microservice-helper');
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
@@ -36,10 +35,14 @@ module.exports = {
         return { success: true };
     },
     loadScheduleEntries: async (user) => {
+        let scheduleEntries = [];
         if ( user.admin ) {
-            return await ScheduleEntry.find({});
+             scheduleEntries = await ScheduleEntry.find({});
+
+        } else {
+            scheduleEntries = await ScheduleEntry.find({ owner: user });
         }
-        return await ScheduleEntry.find({ owner: user });
+        return { success: true, entries: scheduleEntries }
     },
     findByDateRange: async (startDate, endDate) => {
         let entries = await ScheduleEntry.find({
