@@ -18,6 +18,8 @@ router.delete('/scheduleEntry', async (req, res) => {
 router.get('/scheduleEntry', async (req, res) => {
     if (req.query.startDate && req.query.endDate){
         res.json(await scheduleEntryService.findByDateRange(req.query.startDate, req.query.endDate))
+    } else if (req.query.eventId){
+        res.json(await scheduleEntryService.findByEventId(req.query.eventId))
     } else {
         res.json(await scheduleEntryService.loadScheduleEntries(req.body.user));
     }

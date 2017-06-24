@@ -2,47 +2,60 @@
  * Created by lukas on 09/04/2017.
  */
 const ScheduleEntry = require('../models/scheduleEntry');
+let moment = require('moment');
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
         requestData.owner = requestData.user;
+        if (requestData.fromUTC){
+            requestData.start = moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
+            requestData.end = moment(requestData.end.toString()).add(moment(new Date()).utcOffset(), 'minutes');
+        }
+        console.log(moment(requestData.start).isUTC());
         scheduleEntry = await new ScheduleEntry({
-            start:  requestData.start,
+            start: requestData.start,
             end: requestData.end, owner: user, eventId: requestData.eventId,
             testId: requestData.testId, title: requestData.title
         }).save();
-        return { scheduleEntry: scheduleEntry }
+        return {scheduleEntry: scheduleEntry}
     },
     updateScheduleEntry: async (id, requestData) => {
-        let scheduleEntry = await ScheduleEntry.findOne({ _id: id });
-        if ( !scheduleEntry ) {
-            return { success: false, msg: 'ScheduleEntry not found' };
+        let scheduleEntry = await ScheduleEntry.findOne({_id: id});
+        if (!scheduleEntry) {
+            return {success: false, msg: 'ScheduleEntry not found'};
         }
-        await ScheduleEntry.findOneAndUpdate({ _id: id }, {
+        if (requestData.fromUTC) {
+            requestData.start = moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
+            requestData.end =  moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
+        }
+        await ScheduleEntry.findOneAndUpdate({_id: id}, {
             $set: {
-                start: requestData.start, end: requestData.end, eventId: requestData.eventId,
-                testId: requestData.testId, title: requestData.title
+                start: moment(requestData.start).toDate(),
+                end: moment(requestData.end).toDate(),
+                eventId: requestData.eventId,
+                testId: requestData.testId,
+                title: requestData.titlee
             }
         });
-        return { success: true };
+        return {success: true};
     },
     deleteScheduleEntry: async (id) => {
-        let entry = await ScheduleEntry.findOne({ _id: id });
-        if ( !entry ) {
-            return { success: false, msg: "ScheduleEntry not found" };
+        let entry = await ScheduleEntry.findOne({_id: id});
+        if (!entry) {
+            return {success: false, msg: "ScheduleEntry not found"};
         }
         await entry.remove();
-        return { success: true };
+        return {success: true};
     },
     loadScheduleEntries: async (user) => {
         let scheduleEntries = [];
-        if ( user.admin ) {
-             scheduleEntries = await ScheduleEntry.find({});
+        if (user.admin) {
+            scheduleEntries = await ScheduleEntry.find({});
 
         } else {
-            scheduleEntries = await ScheduleEntry.find({ owner: user });
+            scheduleEntries = await ScheduleEntry.find({owner: user});
         }
-        return { success: true, entries: scheduleEntries }
+        return {success: true, entries: scheduleEntries}
     },
     findByDateRange: async (startDate, endDate) => {
         let entries = await ScheduleEntry.find({
@@ -51,6 +64,13 @@ module.exports = {
                 {start: {$lt: endDate}}
             ]
         });
-        return { result: entries }
+        return {result: entries}
+    },
+    findByEventId: async (eventId) => {
+        let relevantEntry = await ScheduleEntry.findOne({eventId: eventId});
+        if (!relevantEntry) {
+            return {success: false}
+        }
+        return {success: true, scheduleEntry: relevantEntry}
     }
 };

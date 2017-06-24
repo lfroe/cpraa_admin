@@ -19,6 +19,8 @@ let path = require('path');
 let hydraExpress = require('hydra-express');
 let hydra = hydraExpress.getHydra();
 
+const mshelper = require('@v3rg1l/microservice-helper');
+
 mongoose.Promise = require('bluebird');
 
 let connectWithRetry = function () {
@@ -43,7 +45,7 @@ connectWithRetry();
 function registerMiddleware() {
     let app = hydraExpress.getExpressApp();
     app.use(cors({
-        allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "x-access-token", "refresh_token"],
+        allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "x-access-token", "impersonation-token"],
         origin: '*'
     }));
     const whitelist = ['/api/login/authenticate'];
@@ -56,40 +58,54 @@ function registerMiddleware() {
         if (whitelist.indexOf(req.url) >= 0) {
             next();
         } else {
+            let impersonationToken = req.headers['impersonation-token'];
             let token = req.body.token || req.query.token || req.headers['x-access-token'];
+            let isImpersonated = false;
+            if (impersonationToken && impersonationToken !== "null"){
+                token = impersonationToken;
+                isImpersonated = true;
+            }
             let requiredRightEntry = _.maxBy(_.filter(config.rights, (right) => {
-                return req.url.indexOf(right.url) >= 0
-                    && right.methods.indexOf(req.method) >= 0
+                return req.url.indexOf(right.url) >= 0 && right.methods.indexOf(req.method) >= 0;
             }), (r) => {
-                return r.url.length
+                return r.url.length;
             });
             if (token) {
-                jwt.verify(token, req.app.get('superSecret'), function (err, decoded) {
+                jwt.verify(token, req.app.get('superSecret'), async (err, decoded) => {
                     if (err) {
                         return res.json({success: false, message: 'Failed to authenticate token.'});
-                    } else if (requiredRightEntry) {
-                        //******* CHECK USER RIGHTS  */
-                        if (requiredRightEntry.adminOnly && !decoded.user.admin) {
-                            res.send(401);
-                            return;
-                        } else {
-                            let rights = [];
-                            _.each(decoded.user.roles, (role) => {
-                                _.each(role.rights, (right) => {
-                                    rights.push(right.name);
-                                });
-                                rights = _.uniq(rights);
+                    } else {
+                        let sessionCounterData = await mshelper.sendServiceRequest('auth-service', '/auth-service/api/usermanagement/sessionCounter', 'get',
+                            {}, {userId: decoded.user._id}, {'x-access-token': token});
+                        if (!isImpersonated && (!sessionCounterData.success || sessionCounterData.sessionCounter !== decoded.user.sessionCounter)) {
+                            return res.status(403).send({
+                                success: false,
+                                message: 'There is a more recent session active for this user.'
                             });
-                            if (_.difference(requiredRightEntry.requiredRights, rights).length > 0) {
+                        } else if (requiredRightEntry) {
+                            //******* CHECK USER RIGHTS  */
+                            if (requiredRightEntry.adminOnly && !decoded.user.admin) {
                                 res.send(401);
                                 return;
+                            } else {
+                                let rights = [];
+                                _.each(decoded.user.roles, (role) => {
+                                    _.each(role.rights, (right) => {
+                                        rights.push(right.name);
+                                    });
+                                    rights = _.uniq(rights);
+                                });
+                                if (_.difference(requiredRightEntry.requiredRights, rights).length > 0) {
+                                    res.send(401);
+                                    return;
+                                }
                             }
                         }
+                        req.decoded = decoded;
+                        req.body.user = decoded.user;
+                        req.body.token = token;
+                        next();
                     }
-                    req.decoded = decoded;
-                    req.body.user = decoded.user;
-                    req.body.token = token;
-                    next();
                 });
             } else {
                 return res.status(403).send({
