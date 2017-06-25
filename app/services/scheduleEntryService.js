@@ -7,13 +7,11 @@ let moment = require('moment');
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
         requestData.owner = requestData.user;
-        if (requestData.fromUTC){
-            requestData.start = moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
-            requestData.end = moment(requestData.end.toString()).add(moment(new Date()).utcOffset(), 'minutes');
-        }
-        console.log(moment(requestData.start).isUTC());
+        requestData.start = moment.utc(requestData.start).format();
+        requestData.end = moment.utc(requestData.end).format();
         scheduleEntry = await new ScheduleEntry({
             start: requestData.start,
+            schoolClassId: requestData.schoolClassId,
             end: requestData.end, owner: user, eventId: requestData.eventId,
             testId: requestData.testId, title: requestData.title
         }).save();
@@ -24,17 +22,16 @@ module.exports = {
         if (!scheduleEntry) {
             return {success: false, msg: 'ScheduleEntry not found'};
         }
-        if (requestData.fromUTC) {
-            requestData.start = moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
-            requestData.end =  moment(requestData.start.toString()).add(moment(new Date()).utcOffset(), 'minutes');
-        }
+        requestData.start = moment.utc(requestData.start).format();
+        requestData.end = moment.utc(requestData.end).format();
         await ScheduleEntry.findOneAndUpdate({_id: id}, {
             $set: {
                 start: moment(requestData.start).toDate(),
                 end: moment(requestData.end).toDate(),
                 eventId: requestData.eventId,
+                schoolClassId: requestData.schoolClassId,
                 testId: requestData.testId,
-                title: requestData.titlee
+                title: requestData.title
             }
         });
         return {success: true};
