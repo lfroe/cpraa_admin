@@ -6,6 +6,7 @@ let moment = require('moment');
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
+        console.log('semaphore test');
         requestData.owner = requestData.user;
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
