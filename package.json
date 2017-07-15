@@ -25,6 +25,10 @@
     "password-sheriff": "^1.1.0"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.1.1",
+    "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-react": "^7.1.0",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.8",
     "nodemon": "^1.11.0"
