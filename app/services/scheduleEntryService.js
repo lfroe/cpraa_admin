@@ -6,6 +6,7 @@ const moment = require('moment');
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
+        console.log('jenkins')
         requestData.owner = requestData.user;
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
