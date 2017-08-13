@@ -1,10 +1,10 @@
 /**
  * Created by lukas on 09/04/2017.
  */
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-let scheduleEntryService = require('../services/scheduleEntryService');
+const scheduleEntryService = require('../services/scheduleEntryService');
 
 router.post('/scheduleEntry', async (req, res) => {
     res.json(await scheduleEntryService.saveScheduleEntry(req.body, req.body.user))
