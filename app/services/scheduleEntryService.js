@@ -3,6 +3,7 @@
  */
 const ScheduleEntry = require('../models/scheduleEntry');
 const moment = require('moment');
+const mshelper = require('@v3rg1l/microservice-helper');
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {
@@ -44,13 +45,16 @@ module.exports = {
         await entry.remove();
         return {success: true};
     },
-    loadScheduleEntries: async (user) => {
+    loadScheduleEntries: async (userId, token) => {
+        const userData = await mshelper.sendServiceRequest('admin-service',
+            '/gate/routeRequest/auth-service/api/usermanagement/user',
+            'get', {}, {id: userId}, {'x-access-token': token});
         let scheduleEntries = [];
-        if (user.admin) {
+        if (userData.user.admin) {
             scheduleEntries = await ScheduleEntry.find({});
 
         } else {
-            scheduleEntries = await ScheduleEntry.find({owner: user});
+            scheduleEntries = await ScheduleEntry.find({owner: userData.user});
         }
         return {success: true, entries: scheduleEntries}
     },

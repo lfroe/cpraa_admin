@@ -21,7 +21,7 @@ router.get('/scheduleEntry', async (req, res) => {
     } else if (req.query.eventId){
         res.json(await scheduleEntryService.findByEventId(req.query.eventId))
     } else {
-        res.json(await scheduleEntryService.loadScheduleEntries(req.body.user));
+        res.json(await scheduleEntryService.loadScheduleEntries(req.query.userId, req.headers['x-access-token']));
     }
 });
 module.exports = router;

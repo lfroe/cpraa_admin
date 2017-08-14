@@ -2,7 +2,7 @@
   "name": "node-token-jwt",
   "main": "server.js",
   "dependencies": {
-    "@v3rg1l/microservice-helper": "^1.0.14",
+    "@v3rg1l/microservice-helper": "^1.0.25",
     "amqplib": "^0.5.1",
     "async": "^2.1.5",
     "bcrypt-nodejs": "0.0.3",
