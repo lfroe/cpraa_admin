@@ -7,8 +7,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
-let Config = require('./config'),
-    config = Config();
+const Config = require('./config'),
+      config = Config();
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
