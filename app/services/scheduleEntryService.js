@@ -3,7 +3,7 @@
  */
 const ScheduleEntry = require('../models/scheduleEntry');
 const moment = require('moment');
-const mshelper = require('@v3rg1l/microservice-helper');
+const mshelper = require('@v3rg1l/microservice-helper').requestHelper;
 
 module.exports = {
     saveScheduleEntry: async (requestData, user) => {

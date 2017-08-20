@@ -10,17 +10,7 @@ const mongoose = require('mongoose');
 const Config = require('./config'),
       config = Config();
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const _ = require('lodash');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-
 const hydraExpress = require('hydra-express');
-const hydra = hydraExpress.getHydra();
-
-const mshelper = require('@v3rg1l/microservice-helper');
-
 mongoose.Promise = require('bluebird');
 
 const connectWithRetry = function () {
@@ -48,8 +38,6 @@ function registerMiddleware() {
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
         origin: '*'
     }));
-    const whitelist = ['/api/login/authenticate'];
-
     app.set('superSecret', config.secret);
     app.use(bodyParser.urlencoded({extended: false, limit: '15mb'}));
     app.use(bodyParser.json({limit: '15mb'}));
@@ -68,7 +56,7 @@ hydraExpress.init(config.hydraConfig, '', onRegisterRoutes, registerMiddleware).
 })
     .catch((err) => {
         console.log('err', err);
-    });
+});
 
 
 
