@@ -2,7 +2,7 @@
   "name": "node-token-jwt",
   "main": "server.js",
   "dependencies": {
-    "@v3rg1l/microservice-helper": "^1.0.39",
+    "@v3rg1l/microservice-helper": "*",
     "amqplib": "^0.5.1",
     "async": "^2.1.5",
     "bcrypt-nodejs": "0.0.3",
@@ -27,15 +27,82 @@
     "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "^4.1.1",
-    "eslint-plugin-react": "^7.1.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.1",
+    "eslint": "^4.5.0",
+    "eslint-plugin-mocha": "^4.11.0",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.8",
-    "nodemon": "^1.11.0"
+    "mocha": "^3.5.0",
+    "mocha-jenkins-reporter": "^0.3.8",
+    "mockgoose": "^7.3.3",
+    "node-mocks-http": "^1.6.4",
+    "nodemon": "^1.11.0",
+    "nyc": "^11.1.0",
+    "rewire": "^2.5.2"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "mocha specs/**/*.js",
+    "test-with-coverage": "nyc --reporter=text --reporter=cobertura mocha specs/**/*.js"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true,
+      "node": true
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true,
+        "modules": true
+      }
+    },
+    "rules": {
+      "max-len": [
+        2,
+        150,
+        4
+      ],
+      "prefer-const": 1,
+      "no-underscore-dangle": [
+        0
+      ],
+      "no-var": 2,
+      "no-undef": 2,
+      "react/display-name": 0,
+      "jsx-quotes": 2,
+      "react/jsx-no-undef": 2,
+      "react/jsx-sort-props": 0,
+      "react/jsx-uses-react": 2,
+      "react/jsx-uses-vars": 2,
+      "react/no-did-mount-set-state": 2,
+      "react/no-did-update-set-state": 2,
+      "react/no-multi-comp": 0,
+      "react/no-unknown-property": 2,
+      "react/prop-types": 0,
+      "react/react-in-jsx-scope": 2,
+      "react/self-closing-comp": 2,
+      "react/jsx-wrap-multilines": 2,
+      "quotes": [
+        1,
+        "single"
+      ],
+      "space-before-function-paren": [
+        2,
+        {
+          "anonymous": "always",
+          "named": "never"
+        }
+      ],
+      "strict": [
+        2,
+        "global"
+      ]
+    },
+    "plugins": [
+      "react"
+    ]
   }
 }
