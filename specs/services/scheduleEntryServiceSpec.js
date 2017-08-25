@@ -19,7 +19,6 @@ const utilServiceMock = {
         return {success: password.length >= 10}
     }
 };
-
 mongoose.Promise = require('bluebird');
 before(done => {
     mockgoose.prepareStorage().then(() => {
