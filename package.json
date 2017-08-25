@@ -44,7 +44,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "test": "mocha specs/**/*.js",
-    "test-with-coverage": "nyc --reporter=text --reporter=cobertura mocha specs/**/*.js"
+    "test-with-coverage": "nyc --reporter=text --reporter=cobertura mocha --timeout 120000000 specs/**/*.js"
   },
   "eslintConfig": {
     "env": {
