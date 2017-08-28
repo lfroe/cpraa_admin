@@ -1,14 +1,11 @@
-// =======================
-// get the packages we need ============
-// =======================
-// let express = require('express');
-// let app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const Config = require('./config'),
       config = Config();
+const utils = require('@v3rg1l/microservice-helper').utilService;
+const logger = utils.getLogger('admin-service-info', config.logPath);
 const cors = require('cors');
 const hydraExpress = require('hydra-express');
 mongoose.Promise = require('bluebird');
@@ -52,11 +49,8 @@ function onRegisterRoutes() {
 
 }
 hydraExpress.init(config.hydraConfig, '', onRegisterRoutes, registerMiddleware).then((serviceInfo) => {
-    console.log('serviceInfo', serviceInfo);
+    logger.info('serviceInfo', serviceInfo);
 })
     .catch((err) => {
-        console.log('err', err);
+        logger.error('err', err);
 });
-
-
-
