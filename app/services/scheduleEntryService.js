@@ -16,7 +16,7 @@ module.exports = {
             end: requestData.end, owner: user, eventId: requestData.eventId,
             testId: requestData.testId, title: requestData.title
         }).save();
-        return {scheduleEntry: scheduleEntry}
+        return {scheduleEntry};
     },
     updateScheduleEntry: async (id, requestData) => {
         const scheduleEntry = await ScheduleEntry.findOne({_id: id});
@@ -56,7 +56,7 @@ module.exports = {
         } else {
             scheduleEntries = await ScheduleEntry.find({owner: userData.user});
         }
-        return {success: true, entries: scheduleEntries}
+        return {success: true, entries: scheduleEntries};
     },
     findByDateRange: async (startDate, endDate) => {
         const entries = await ScheduleEntry.find({
@@ -65,13 +65,13 @@ module.exports = {
                 {start: {$lt: endDate}}
             ]
         });
-        return {result: entries}
+        return {result: entries};
     },
     findByEventId: async (eventId) => {
-        const relevantEntry = await ScheduleEntry.findOne({eventId: eventId});
+        const relevantEntry = await ScheduleEntry.findOne({eventId});
         if (!relevantEntry) {
-            return {success: false}
+            return {success: false};
         }
-        return {success: true, scheduleEntry: relevantEntry}
+        return {success: true, scheduleEntry: relevantEntry};
     }
 };
