@@ -22,8 +22,8 @@ const connectWithRetry = function () {
         pass: config.dbPass
     }, (err) => {
         if (err) {
-            console.log(`failed to connect to ${config.dbURI}`);
-            setTimeout(connectWithRetry, 1000)
+            logger.error(`failed to connect to ${config.dbURI}`);
+            setTimeout(connectWithRetry, 1000);
         }
     });
 };
