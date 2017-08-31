@@ -9,6 +9,7 @@ const logger = utils.getLogger('admin-service-info', config.logPath);
 const cors = require('cors');
 const hydraExpress = require('hydra-express');
 mongoose.Promise = require('bluebird');
+const scheduleEntryController = require('./app/controllers/scheduleEntryController');
 
 const connectWithRetry = function () {
     mongoose.connect(config.dbURI, {
@@ -42,7 +43,6 @@ function registerMiddleware() {
 }
 
 function onRegisterRoutes() {
-    const scheduleEntryController = require('./app/controllers/scheduleEntryController');
     hydraExpress.registerRoutes({
         '/api/scheduleEntries': scheduleEntryController
     });

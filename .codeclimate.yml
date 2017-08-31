@@ -12,9 +12,10 @@ engines:
       - javascript:
 ratings:
   paths:
-  - app/**
+  - "**.es6"
   - "**.js"
-  - "**.go"
+  - "**.jsx"
 exclude_paths:
 - specs/**/*
+- config.js
 - "**/vendor/**/*"
