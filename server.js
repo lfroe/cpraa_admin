@@ -11,16 +11,16 @@ const hydraExpress = require('hydra-express');
 mongoose.Promise = require('bluebird');
 const scheduleEntryController = require('./app/controllers/scheduleEntryController');
 
-const connectWithRetry = function () {
+const connectWithRetry = () => {
     mongoose.connect(config.dbURI, {
         server: {
             socketOptions: {
-                socketTimeoutMS: 0,
+                socketTimeoutMS  : 0,
                 connectionTimeout: 0
             }
         },
-        user: config.dbUser,
-        pass: config.dbPass
+        user  : config.dbUser,
+        pass  : config.dbPass
     }, (err) => {
         if (err) {
             logger.error(`failed to connect to ${config.dbURI}`);
@@ -34,7 +34,7 @@ function registerMiddleware() {
     const app = hydraExpress.getExpressApp();
     app.use(cors({
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
-        origin: '*'
+        origin        : '*'
     }));
     app.set('superSecret', config.secret);
     app.use(bodyParser.urlencoded({extended: false, limit: '15mb'}));
@@ -48,9 +48,10 @@ function onRegisterRoutes() {
     });
 
 }
+
 hydraExpress.init(config.hydraConfig, '', onRegisterRoutes, registerMiddleware).then((serviceInfo) => {
     logger.info('serviceInfo', serviceInfo);
 })
     .catch((err) => {
         logger.error('err', err);
-});
+    });
