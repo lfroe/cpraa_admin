@@ -226,7 +226,9 @@ rules:
   operator-linebreak: off
   padded-blocks: off
   quote-props: off
-  quotes: off
+  quotes:
+    - error
+    - single
   require-jsdoc: off
   semi-spacing: off
   semi: off
@@ -243,9 +245,9 @@ rules:
   wrap-regex: off
 
   # ECMAScript 6
-  arrow-body-style: off
+  arrow-body-style: 2
   arrow-parens: off
-  arrow-spacing: off
+  arrow-spacing: 2
   constructor-super: off
   generator-star-spacing: off
   no-class-assign: off
