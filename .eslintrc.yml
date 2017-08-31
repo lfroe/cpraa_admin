@@ -172,7 +172,10 @@ rules:
   func-call-spacing: off
   func-name-matching: off
   func-names: off
-  func-style: off
+  func-style:
+    - error
+    - declaration
+    - allowArrowFunctions: true
   id-length: off
   id-match: off
   indent: off
@@ -263,7 +266,7 @@ rules:
   no-useless-rename: off
   no-var: off
   object-shorthand: off
-  prefer-arrow-callback: off
+  prefer-arrow-callback: 1
   prefer-const: off
   prefer-destructuring: off
   prefer-numeric-literals: off
