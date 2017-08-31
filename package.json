@@ -48,6 +48,6 @@
     "start": "nodemon server.js",
     "test-without-coverage": "mocha --timeout 120000000 specs/**/*.js",
     "test-with-coverage": "nyc --reporter=text --reporter=lcovonly --reporter=cobertura mocha --timeout 120000000 specs/**/*.js && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage --token 064805ac0c9a4f8399bed334bd4a71cc && rm -rf ./coverage",
-    "test-code-climate": "nyc --reporter=lcovonly --timeout 120000000 specs/**/*.js && cat ./coverage/lcov.info | ./node_modules/.bin/codeclimate-test-reporter CODECLIMATE_REPO_TOKEN=80283695a0ccf495cc749a891bd3dcb838de99c09abe7a28ecf147ff438388bf && rm -rf ./coverage"
+    "test-code-climate": "nyc --reporter=lcovonly mocha --timeout 120000000 specs/**/*.js && CODECLIMATE_REPO_TOKEN=80283695a0ccf495cc749a891bd3dcb838de99c09abe7a28ecf147ff438388bf ./node_modules/.bin/codeclimate-test-reporter < ./coverage/lcov.info && rm -rf ./coverage"
   }
 }
