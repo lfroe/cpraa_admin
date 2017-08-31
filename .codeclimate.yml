@@ -1,0 +1,20 @@
+engines:
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+  fixme:
+      enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript:
+ratings:
+  paths:
+  - app/**
+  - "**.js"
+  - "**.go"
+exclude_paths:
+- specs/**/*
+- "**/vendor/**/*"
