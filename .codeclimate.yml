@@ -6,10 +6,10 @@ engines:
   fixme:
       enabled: true
   duplication:
-    enabled: true
-    config:
-      languages:
-      - javascript:
+      enabled: true
+      checks:
+        Similar code:
+          enabled: false
 ratings:
   paths:
   - "**.es6"

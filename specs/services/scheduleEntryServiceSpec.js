@@ -23,9 +23,10 @@ mongoose.Promise = require('bluebird');
 before(done => {
     mockgoose.prepareStorage().then(() => {
         if (mongoose.connection.db) return done();
-        mongoose.connect('mongodb://localhost/admn', {}, (err) => {
+        mongoose.connect('mongodb://localhost/admn', {}, err => {
+            console.log('Error occurred while trying to connect to mongo', err)
         });
-        mongoose.connection.on('error', function (err) {
+        mongoose.connection.on('error', (err) => {
             done(err)
         });
     });
