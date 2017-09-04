@@ -248,7 +248,7 @@ rules:
   wrap-regex: off
 
   # ECMAScript 6
-  arrow-body-style: 2
+  arrow-body-style: [2, "as-needed"]
   arrow-parens: off
   arrow-spacing: 2
   constructor-super: off
