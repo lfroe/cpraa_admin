@@ -10,7 +10,7 @@ router.post('/scheduleEntry', async (req, res) => {
     res.json(await scheduleEntryService.save(req.body, req.body.user));
 });
 router.put('/scheduleEntry', async (req, res) => {
-    res.json(await scheduleEntryService.update(req.query.id, req.body));
+    res.json(await scheduleEntryService.update(req.query.eventId, req.body));
 });
 router.delete('/scheduleEntry', async (req, res) => {
     res.json(await scheduleEntryService.delete(req.query.id));
