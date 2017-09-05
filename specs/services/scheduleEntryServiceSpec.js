@@ -52,7 +52,7 @@ describe('scheduleEntry save', () => {
             title        : 'some title',
             eventId      : '12345'
         };
-        const result = await scheduleEntryService.saveScheduleEntry(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
+        const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
         assert.isDefined(result.scheduleEntry);
         expect(result.scheduleEntry).to.have.property('_id');
         assert.strictEqual(result.scheduleEntry.title, 'some title')
@@ -69,9 +69,9 @@ describe('scheduleEntry save', () => {
            title        : 'some title',
            eventId      : '12345'
        };
-       const result = await scheduleEntryService.saveScheduleEntry(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
+       const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
        assert.isDefined(result.scheduleEntry);
-       await scheduleEntryService.deleteScheduleEntry(result.scheduleEntry._id);
+       await scheduleEntryService.delete(result.scheduleEntry._id);
        const se = await ScheduleEntry.findOne({ _id: result.scheduleEntry._id });
        assert.isNull(se);
    })

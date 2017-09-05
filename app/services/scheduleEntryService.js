@@ -6,7 +6,7 @@ const moment = require('moment');
 const mshelper = require('@v3rg1l/microservice-helper').requestHelper;
 
 module.exports = {
-    saveScheduleEntry: async (requestData, user) => {
+    save: async (requestData, user) => {
         requestData.owner = requestData.user;
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
@@ -16,9 +16,9 @@ module.exports = {
             end: requestData.end, owner: user, eventId: requestData.eventId,
             testId: requestData.testId, title: requestData.title
         }).save();
-        return {scheduleEntry};
+        return {success: true, scheduleEntry};
     },
-    updateScheduleEntry: async (id, requestData) => {
+    update: async (id, requestData) => {
         const scheduleEntry = await ScheduleEntry.findOne({_id: id});
         if (!scheduleEntry) {
             return {success: false, msg: 'ScheduleEntry not found'};
@@ -37,7 +37,7 @@ module.exports = {
         });
         return {success: true};
     },
-    deleteScheduleEntry: async (id) => {
+    delete: async (id) => {
         const entry = await ScheduleEntry.findOne({_id: id});
         if (!entry) {
             return {success: false, msg: 'ScheduleEntry not found'};
@@ -45,7 +45,7 @@ module.exports = {
         await entry.remove();
         return {success: true};
     },
-    loadScheduleEntries: async (userId, token) => {
+    loadAll: async (userId, token) => {
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
             'get', {}, {id: userId}, {'x-access-token': token});
@@ -58,7 +58,7 @@ module.exports = {
         }
         return {success: true, entries: scheduleEntries};
     },
-    findByDateRange: async (startDate, endDate) => {
+    loadByDateRange: async (startDate, endDate) => {
         const entries = await ScheduleEntry.find({
             $and: [
                 {start: {$gt: startDate}},
@@ -67,7 +67,7 @@ module.exports = {
         });
         return {result: entries};
     },
-    findByEventId: async (eventId) => {
+    loadByEventId: async (eventId) => {
         const relevantEntry = await ScheduleEntry.findOne({eventId});
         if (!relevantEntry) {
             return {success: false};
