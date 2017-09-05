@@ -19,13 +19,13 @@ module.exports = {
         return {success: true, scheduleEntry};
     },
     update         : async (id, requestData) => {
-        const scheduleEntry = await ScheduleEntry.findOne({'$or': [{eventId: id}, {_id: id}]});
+        const scheduleEntry = await ScheduleEntry.findOne({_id: id});
         if (!scheduleEntry) {
             return {success: false, msg: 'ScheduleEntry not found'};
         }
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
-        await ScheduleEntry.findOneAndUpdate({'$or': [{eventId: id}, {_id: id}]}, {
+        await ScheduleEntry.findOneAndUpdate({_id: id}, {
             $set: {
                 start        : moment(requestData.start).toDate(),
                 end          : moment(requestData.end).toDate(),
