@@ -4,12 +4,14 @@
 const ScheduleEntry = require('../models/scheduleEntry');
 const moment = require('moment');
 const mshelper = require('@v3rg1l/microservice-helper').requestHelper;
+const utils = require('@v3rg1l/microservice-helper').utilService;
 
 module.exports = {
     save           : async (requestData, user) => {
         requestData.owner = requestData.user;
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
+        requestData.eventId = requestData.eventId || utils.guid();
         const scheduleEntry = await new ScheduleEntry({
             start        : requestData.start,
             schoolClassId: requestData.schoolClassId,
@@ -25,6 +27,7 @@ module.exports = {
         }
         requestData.start = moment.utc(requestData.start).format();
         requestData.end = moment.utc(requestData.end).format();
+        requestData.eventId = requestData.eventId || utils.guid();
         await ScheduleEntry.findOneAndUpdate({_id: id}, {
             $set: {
                 start        : moment(requestData.start).toDate(),
