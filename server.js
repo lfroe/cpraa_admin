@@ -1,7 +1,8 @@
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-
+const express = require('express');
+const path = require('path');
 const Config = require('./config'),
       config = Config();
 const utils = require('@v3rg1l/microservice-helper').utilService;
@@ -39,6 +40,7 @@ function registerMiddleware() {
     app.set('superSecret', config.secret);
     app.use(bodyParser.urlencoded({extended: false, limit: '15mb'}));
     app.use(bodyParser.json({limit: '15mb'}));
+    app.use(express.static(path.join(__dirname, '/public')));
     app.use(morgan('dev'));
 }
 
