@@ -2,7 +2,7 @@
   "name": "node-token-jwt",
   "main": "server.js",
   "dependencies": {
-    "@v3rg1l/microservice-helper": "^1.0.14",
+    "@v3rg1l/microservice-helper": "*",
     "amqplib": "^0.5.1",
     "async": "^2.1.5",
     "bcrypt-nodejs": "0.0.3",
@@ -22,18 +22,31 @@
     "morgan": "^1.8.1",
     "multer": "^1.3.0",
     "nodemailer": "^4.0.1",
-    "password-sheriff": "^1.1.0"
+    "password-sheriff": "^1.1.0",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.1.1",
-    "eslint-plugin-babel": "^4.1.1",
-    "eslint-plugin-react": "^7.1.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.1",
+    "codacy-coverage": "^2.0.2",
+    "codeclimate-test-reporter": "^0.5.0",
+    "eslint": "^4.5.0",
+    "eslint-plugin-mocha": "^4.11.0",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.8",
-    "nodemon": "^1.11.0"
+    "mocha": "^3.5.0",
+    "mocha-jenkins-reporter": "^0.3.8",
+    "mocha-lcov-reporter": "^1.3.0",
+    "mockgoose": "^7.3.3",
+    "node-mocks-http": "^1.6.4",
+    "nodemon": "^1.11.0",
+    "nyc": "^11.1.0",
+    "rewire": "^2.5.2"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test-without-coverage": "mocha --timeout 120000000 specs/**/*.js",
+    "test-with-coverage": "nyc --reporter=text --reporter=lcovonly --reporter=cobertura mocha --timeout 120000000 specs/**/*.js && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage --token 064805ac0c9a4f8399bed334bd4a71cc && rm -rf ./coverage"
   }
 }

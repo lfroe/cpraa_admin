@@ -1,0 +1,21 @@
+engines:
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+  fixme:
+      enabled: true
+  duplication:
+      enabled: true
+      checks:
+        Similar code:
+          enabled: false
+ratings:
+  paths:
+  - "**.es6"
+  - "**.js"
+  - "**.jsx"
+exclude_paths:
+- specs/**/*
+- config.js
+- "**/vendor/**/*"
