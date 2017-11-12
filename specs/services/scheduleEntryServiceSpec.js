@@ -31,10 +31,12 @@ before(done => {
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
+    console.log('calling done() function')
     done()
 });
 beforeEach(done => {
     mongoose.connection.collections.scheduleentries.drop(() => {
+        console.log('also calling done function')
         done();
     });
 });
