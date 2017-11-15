@@ -73,3 +73,5 @@ idea
 /cpraa_core.iml
 /yarn.lock
 /.scannerwork/
+
+cpraa_admin\.iml
