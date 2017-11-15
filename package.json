@@ -47,6 +47,6 @@
   "scripts": {
     "start": "nodemon server.js",
     "test-without-coverage": "mocha --timeout 120000000 specs/**/*.js",
-    "test-with-coverage": "nyc --reporter=text --reporter=lcovonly --reporter=cobertura mocha --timeout 120000000 specs/**/*.js && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage --token 064805ac0c9a4f8399bed334bd4a71cc && rm -rf ./coverage"
+    "test-with-coverage": "nyc --reporter=text --reporter=lcovonly --reporter=cobertura mocha --timeout 120000000 specs/**/*.js"
   }
 }
