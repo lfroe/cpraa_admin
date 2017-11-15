@@ -26,18 +26,17 @@ before(done => {
         mongoose.connect('mongodb://localhost/admn', {}, err => {
             console.log('Error occurred while trying to connect to mongo', err)
         });
-        mongoose.connection.on('error', (err) => {
-            done(err)
-        });
     });
     scheduleEntryService.__set__({
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
+    console.log('calling done() function')
     done()
 });
 beforeEach(done => {
     mongoose.connection.collections.scheduleentries.drop(() => {
+        console.log('also calling done function')
         done();
     });
 });
