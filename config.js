@@ -3,7 +3,7 @@ module.exports = () => {
         appId: '464450',
         key: '9dc09ccbf2cf278d932f',
         secret: '748d9be0da2fad72e4e0',
-        host: '78.46.126.136',
+        host: 'slanger.cepraa.at',
         port: 4567,
         encrypted: false
     };
