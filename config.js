@@ -1,4 +1,12 @@
 module.exports = () => {
+    const pusherConfig = {
+        appId: '464450',
+        key: '9dc09ccbf2cf278d932f',
+        secret: '748d9be0da2fad72e4e0',
+        host: '78.46.126.136',
+        port: 4567,
+        encrypted: false
+    };
     let config = '';
     const defaultConf = {
         secret        : '?D7wPLY2\=z3',
@@ -34,7 +42,7 @@ module.exports = () => {
             }
         },
         smtpSettings  : undefined,
-        pusherConfig  : undefined
+        pusherConfig  : pusherConfig
     };
     try {
         config = require('/data1/conf/admin/config.js');
