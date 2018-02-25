@@ -28,7 +28,7 @@ module.exports = {
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
             'get', {}, {id: scheduleEntry.owner}, {'x-access-token': token});
-        pusher.trigger(userData.user.pusherKey, 'registration-changed', {msg: "New registration"});
+        pusher.trigger(userData.user.pusherKey, 'registration-changed', {msg: 'New registration'});
         return {success: true, registrationEntry};
     },
     deregister: async (id, token) => {
@@ -40,7 +40,7 @@ module.exports = {
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
             'get', {}, {id: scheduleEntry.owner}, {'x-access-token': token});
-        pusher.trigger(userData.user.pusherKey, 'registration-changed', {msg: "New de-registration"});
+        pusher.trigger(userData.user.pusherKey, 'registration-changed', {msg: 'New de-registration'});
         await entry.remove();
         return {success: true};
     },
@@ -61,16 +61,19 @@ module.exports = {
         let registrationEntries = await RegistrationEntry.find({scheduleEntryId: scheduleEntryId});
         let registrationEntryUserData = registrationEntries.length > 0 ?  await mshelper.sendServiceRequest('admin-service',
                     '/gate/routeRequest/auth-service/api/usermanagement/users',
-                    'get', {}, {ids: registrationEntries.map((entry) => { return entry.ownerId })}, {'x-access-token': token}) : [];
+                    'get', {}, {ids: registrationEntries.map((entry) => entry.ownerId )}, {'x-access-token': token}) : [];
+        let maxRow = 0,
+            maxSeat = 0;
         let result = registrationEntries.map((registrationEntry) => {
-            let relevantUser = _.find(registrationEntryUserData.users, (user) => {return user._id === registrationEntry.ownerId});
-
+            let relevantUser = _.find(registrationEntryUserData.users, (user) => user._id === registrationEntry.ownerId );
+            maxRow = registrationEntry.row > maxRow ? registrationEntry.row : maxRow;
+            maxSeat = registrationEntry.seat > maxSeat ? registrationEntry.seat : maxSeat;
             return Object.assign({}, { _id: registrationEntry._id, scheduleEntryId: registrationEntry.scheduleEntryId,
                 ownerId: registrationEntry.ownerId, row: registrationEntry.row, seat: registrationEntry.seat,
                 active: registrationEntry.active, stopped: registrationEntry}, {firstName: relevantUser.firstname, lastName: relevantUser.lastname})
         });
-        return {success: true, entries: result};
+        return {success: true, entries: _.sortBy(result, ['row', 'seat']), maxRow, maxSeat};
     }
-   
+
 
 };

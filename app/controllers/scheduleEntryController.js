@@ -4,7 +4,18 @@
 const express = require('express');
 const router = express.Router();
 const scheduleEntryService = require('../services/scheduleEntryService');
-
+/**
+  * @api {post} /scheduleEntry
+  * @apiName Save ScheduleEntry
+  * @apiGroup ScheduleEntry
+  *
+  * @apiDescription Saves scheduleEntry to database
+  *
+  * @apiParam {Object} body The scheduleEntry object
+  *
+  * @apiSuccess {Boolean} success Success state of the api call
+  * @apiSuccess {Object} scheduleEntry The scheduleEntry object
+**/
 router.post('/scheduleEntry', async (req, res) => {
     res.json(await scheduleEntryService.save(req.body, req.body.user));
 });
