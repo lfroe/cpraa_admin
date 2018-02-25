@@ -123,10 +123,9 @@ module.exports = {
         const timeZoneOffset = moment.parseZone(new Date()).utcOffset();
         const startDate = moment().startOf('day').add(timeZoneOffset - 15, 'minutes');
         const endDate = moment().endOf('day').add(timeZoneOffset + 120, 'minutes');
-        logger.info(`Trying to get scheduleEntries for id [${userId}]`);
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
-            'get', {}, {}, {'x-access-token': token});
+            'get', {}, {id: userId}, {'x-access-token': token});
         logger.info(`Got userData ${JSON.stringify(userData)}`)
         let scheduleData = ['admin', 'teacher'].indexOf(userData.user.type) >= 0 ? await module.exports.loadByDateRange(startDate, endDate, null, null, userData) :
             await module.exports.loadOpenByUser(userId, token);
