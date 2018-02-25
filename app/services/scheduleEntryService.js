@@ -123,7 +123,7 @@ module.exports = {
         const timeZoneOffset = moment.parseZone(new Date()).utcOffset();
         const startDate = moment().startOf('day').add(timeZoneOffset - 15, 'minutes');
         const endDate = moment().endOf('day').add(timeZoneOffset + 120, 'minutes');
-        logger.info(`Trying to get scheduleEntries for id [${req.query.userId}]`);
+        logger.info(`Trying to get scheduleEntries for id [${userId}]`);
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
             'get', {}, {id: userId}, {'x-access-token': token});
