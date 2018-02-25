@@ -9,6 +9,7 @@ const utils = require('@v3rg1l/microservice-helper').utilService;
 const Config = require('../../config');
 config = Config();
 const _ = require('lodash');
+const logger = utils.getLogger('perform', config.logPath);
 const Pusher = require('pusher');
 pusher = new Pusher(config.pusherConfig);
 
@@ -172,6 +173,7 @@ module.exports = {
         await scheduleEntry.save();
         switch (scheduleEntry.status) {
             case 'default':
+                logger.info('Setting scheduleEntryState [default]. Triggering Pusher');
                 pusher.trigger(channels, 'open-changed', {
                     openForRegistration: false,
                     id: scheduleEntry.id,
@@ -182,11 +184,12 @@ module.exports = {
                     id: scheduleEntry.id,
                     clazz: scheduleEntry.schoolClassId
                 });
-                if (oldStatus === "open-for-registration") {
+                if (oldStatus === 'open-for-registration') {
                     await RegistrationEntry.deleteMany({ scheduleEntryId: scheduleEntry._id});
                 }
                 break;
             case 'open-for-registration':
+                logger.info('Setting scheduleEntryState [open-for-registration]. Triggering Pusher');
                 pusher.trigger(channels, 'open-changed', {
                     openForRegistration: true,
                     id: scheduleEntry.id,
@@ -194,6 +197,7 @@ module.exports = {
                 });
                 break;
             case 'running':
+                logger.info('Setting scheduleEntryState [running]. Triggering Pusher');
                 pusher.trigger(channels, 'open-changed', {
                     openForRegistration: false,
                     id: scheduleEntry.id,
