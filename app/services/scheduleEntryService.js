@@ -166,6 +166,7 @@ module.exports = {
         const oldStatus = scheduleEntry.status;
         _.each(clazzData.schoolClass.users, (user) => {
             if (user.type === 'student') {
+                logger.info(`Adding channel ${user.pusherKey} to list of channels...`)
                 channels.push(user.pusherKey)
             }
         });
