@@ -126,7 +126,8 @@ module.exports = {
         logger.info(`Trying to get scheduleEntries for id [${userId}]`);
         const userData = await mshelper.sendServiceRequest('admin-service',
             '/gate/routeRequest/auth-service/api/usermanagement/user',
-            'get', {}, {id: userId}, {'x-access-token': token});
+            'get', {}, {}, {'x-access-token': token});
+        logger.info(`Got userData ${JSON.stringify(userData)}`)
         let scheduleData = ['admin', 'teacher'].indexOf(userData.user.type) >= 0 ? await module.exports.loadByDateRange(startDate, endDate, null, null, userData) :
             await module.exports.loadOpenByUser(userId, token);
         if (!scheduleData) {
