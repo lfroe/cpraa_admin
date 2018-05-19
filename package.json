@@ -27,6 +27,7 @@
     "winston-daily-rotate-file": "^1.7.2"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.2",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "codacy-coverage": "^2.0.3",

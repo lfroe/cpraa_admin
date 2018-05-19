@@ -57,7 +57,7 @@ describe('scheduleEntry save', () => {
         assert.strictEqual(result.scheduleEntry.title, 'some title')
     });
 });
-describe('scheduleEntry save', () => {
+describe('scheduleEntry deletion', () => {
    it('try to delete schedule entry => success', async () => {
        const requestData = {
            user         : '5998619578bf532030c64981',
