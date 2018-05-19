@@ -3,15 +3,16 @@
  */
 const ScheduleEntry = require('../models/scheduleEntry');
 const RegistrationEntry = require('../models/registrationEntry');
+const registrationEntryService = require('./registrationEntryService');
 const moment = require('moment');
 const mshelper = require('@v3rg1l/microservice-helper').requestHelper;
 const utils = require('@v3rg1l/microservice-helper').utilService;
-const Config = require('../../config');
-config = Config();
+const Config = require('../../config'),
+      config = Config();
 const _ = require('lodash');
 const logger = utils.getLogger('perform', config.logPath);
-const Pusher = require('pusher');
-pusher = new Pusher(config.pusherConfig);
+const Pusher = require('pusher'),
+      pusher = new Pusher(config.pusherConfig);
 
 module.exports = {
     save: async (requestData, user) => {
@@ -152,6 +153,23 @@ module.exports = {
         await Promise.all(testRequests);
         return {success: true, result};
     },
+    getActiveEntry: async(userId, token) => {
+        const activeEntry = await ScheduleEntry.findOne({owner: userId, status: {$in: ['open-for-registration', 'running']} });
+        if (!activeEntry) {
+            return {success: true}
+        }
+        const closedStates = ['default', 'stopped', 'finished'];
+        let audioTaskData, audioTasks;
+        if (closedStates.indexOf(activeEntry.status) < 0){
+            audioTaskData = await mshelper.sendServiceRequest('admin-service',
+                `/gate/routeRequest/create-service/api/testmanagement/test/${activeEntry.testId}/tasks/audio-container`, 'get',
+                {}, {id: activeEntry.testId}, {'x-access-token': token});
+            if (audioTaskData) {
+                audioTasks = audioTaskData.tasks;
+            }
+        }
+        return {success: true, entryId: activeEntry._id, status: activeEntry.status, audioTasks}
+    },
     setStatus: async (userId, scheduleEntryId, status, token) => {
         const scheduleEntry = await ScheduleEntry.findOne({_id: scheduleEntryId});
         if (!scheduleEntry) {
@@ -173,6 +191,10 @@ module.exports = {
         });
         scheduleEntry.status = status;
         await scheduleEntry.save();
+        const testData = await mshelper.sendServiceRequest('admin-service',
+            '/gate/routeRequest/create-service/api/testmanagement/test', 'get',
+            {}, {id: scheduleEntry.testId}, {'x-access-token': token});
+        let audioTasks, audioTaskData;
         switch (scheduleEntry.status) {
             case 'default':
                 logger.info('Setting scheduleEntryState [default]. Triggering Pusher');
@@ -192,6 +214,12 @@ module.exports = {
                 break;
             case 'open-for-registration':
                 logger.info('Setting scheduleEntryState [open-for-registration]. Triggering Pusher');
+                audioTaskData = await mshelper.sendServiceRequest('admin-service',
+                    `/gate/routeRequest/create-service/api/testmanagement/test/${scheduleEntry.testId}/tasks/audio-container`, 'get',
+                    {}, {id: scheduleEntry.testId}, {'x-access-token': token});
+                if (audioTaskData) {
+                    audioTasks = audioTaskData.tasks;
+                }
                 pusher.trigger(channels, 'open-changed', {
                     openForRegistration: true,
                     id: scheduleEntry.id,
@@ -210,8 +238,26 @@ module.exports = {
                     id: scheduleEntry.id,
                     clazz: scheduleEntry.schoolClassId
                 });
+                module.exports.setRegistrationEntryStatus(scheduleEntry._id, 'active', token);
+                break;
+            case 'stopped':
+            case 'finished':
+            case 'paused':
+                logger.info(`Setting scheduleEntryState [${status}]. Triggering Pusher`);
+                pusher.trigger(channels, 'running-changed', {
+                    running: false,
+                    id: scheduleEntry.id,
+                    clazz: scheduleEntry.schoolClassId
+                });
+                module.exports.setRegistrationEntryStatus(scheduleEntry._id, status, token);
                 break;
         }
-        return {success: true, scheduleEntry}
-    }
+        return {success: true, scheduleEntry, audioTasks}
+    },
+    setRegistrationEntryStatus: async (scheduleEntryId, status, token) => {
+        const entries = await RegistrationEntry.find({scheduleEntryId: scheduleEntryId});
+        _.each(entries, (entry) => {
+            registrationEntryService.setStatus(entry._id, entry.ownerId, status, token)
+        });
+    } 
 };

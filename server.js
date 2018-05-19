@@ -55,7 +55,6 @@ function onRegisterRoutes() {
 
 hydraExpress.init(config.hydraConfig, '', onRegisterRoutes, registerMiddleware).then((serviceInfo) => {
     logger.info('serviceInfo', serviceInfo);
-})
-    .catch((err) => {
-        logger.error('err', err);
-    });
+}).catch((err) => {
+    logger.error('err', err);
+});

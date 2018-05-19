@@ -26,8 +26,7 @@ const schema      = new mongoose.Schema({
     owner              : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     domain             : {type: mongoose.Schema.Types.ObjectId, ref: 'Domain'},
     schoolClassId      : {type: String},
-    status             : {type: String, default: 'default', enum: ['default', 'open-for-registration', 'running', 'stopped', 'finished']},
-    running            : {type: Boolean, default: false},
-    test               : {type: testSchema}
+    status             : {type: String, default: 'default', enum: ['default', 'open-for-registration', 'running', 'stopped', 'paused', 'finished']},
+    running            : {type: Boolean, default: false}
 });
 module.exports    = mongoose.model('ScheduleEntry', schema);

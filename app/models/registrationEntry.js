@@ -8,7 +8,6 @@ const schema = new mongoose.Schema({
     ownerId        : {type: String},
     row            : {type: Number},
     seat           : {type: Number},
-    active         : {type: Boolean, required: true, default: false},
-    stopped        : {type: Boolean, default: false}
+    status         : {type: String, default: 'initial', enum: ['initial', 'active', 'paused', 'stopped', 'finished']}
 });
 module.exports = mongoose.model('RegistrationEntry', schema);
