@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const path = require('path');
 const Config = require('./config'),
-      config = Config();
+    config = Config();
 const utils = require('@v3rg1l/microservice-helper').utilService;
 const logger = utils.getLogger('admin-service-info', config.logPath);
 const cors = require('cors');
@@ -12,17 +12,18 @@ const hydraExpress = require('hydra-express');
 mongoose.Promise = require('bluebird');
 const scheduleEntryController = require('./app/controllers/scheduleEntryController');
 const registrationEntryController = require('./app/controllers/registrationEntryController');
+const statusController = require('./app/controllers/statusController');
 
 const connectWithRetry = () => {
     mongoose.connect(config.dbURI, {
         server: {
             socketOptions: {
-                socketTimeoutMS  : 0,
+                socketTimeoutMS: 0,
                 connectionTimeout: 0
             }
         },
-        user  : config.dbUser,
-        pass  : config.dbPass
+        user: config.dbUser,
+        pass: config.dbPass
     }, (err) => {
         if (err) {
             logger.error(`failed to connect to ${config.dbURI}`);
@@ -36,11 +37,16 @@ function registerMiddleware() {
     const app = hydraExpress.getExpressApp();
     app.use(cors({
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
-        origin        : '*'
+        origin: '*'
     }));
     app.set('superSecret', config.secret);
-    app.use(bodyParser.urlencoded({extended: false, limit: '15mb'}));
-    app.use(bodyParser.json({limit: '15mb'}));
+    app.use(bodyParser.urlencoded({
+        extended: false,
+        limit: '15mb'
+    }));
+    app.use(bodyParser.json({
+        limit: '15mb'
+    }));
     app.use(express.static(path.join(__dirname, '/public')));
     app.use(morgan('dev'));
 }
@@ -48,7 +54,8 @@ function registerMiddleware() {
 function onRegisterRoutes() {
     hydraExpress.registerRoutes({
         '/api/scheduleEntries': scheduleEntryController,
-        '/api/registrationEntries': registrationEntryController
+        '/api/registrationEntries': registrationEntryController,
+        '/api/status': statusController
     });
 
 }
