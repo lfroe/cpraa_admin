@@ -184,7 +184,7 @@ module.exports = {
         const channels = [];
         const oldStatus = scheduleEntry.status;
         _.each(clazzData.schoolClass.users, (user) => {
-            if (user.type === 'student') {
+            if (user.type === 'student' && user.pusherKey) {
                 logger.info(`Adding channel ${user.pusherKey} to list of channels...`)
                 channels.push(user.pusherKey)
             }
@@ -213,7 +213,7 @@ module.exports = {
                 }
                 break;
             case 'open-for-registration':
-                logger.info('Setting scheduleEntryState [open-for-registration]. Triggering Pusher');
+                logger.info('. Triggering Pusher');
                 audioTaskData = await mshelper.sendServiceRequest('admin-service',
                     `/gate/routeRequest/create-service/api/testmanagement/test/${scheduleEntry.testId}/tasks/audio-container`, 'get',
                     {}, {id: scheduleEntry.testId}, {'x-access-token': token});
