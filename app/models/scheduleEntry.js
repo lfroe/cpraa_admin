@@ -3,20 +3,6 @@
  */
 // get an instance of mongoose and mongoose.Schema
 const mongoose    = require('mongoose');
-const gradeSchema = new mongoose.Schema({
-    name        : {type: String, required: true},
-    abbreviation: {type: String, required: true},
-    percent     : {type: Number, required: true}
-});
-const testSchema  = new mongoose.Schema({
-    name         : {type: String, required: true},
-    tasks        : {type: String, required: true},
-    sharingLevel : {type: String},
-    sharedWith   : [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    owner        : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    taskIds      : [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
-    grades       : {type: [gradeSchema]}
-});
 const schema      = new mongoose.Schema({
     start              : {type: Date, required: true},
     end                : {type: Date, required: true},
