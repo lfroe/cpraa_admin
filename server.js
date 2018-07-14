@@ -36,6 +36,7 @@ connectWithRetry();
 
 function registerMiddleware() {
     const app = hydraExpress.getExpressApp();
+    let requestTimes = {};
     app.use(cors({
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
         origin: '*'
@@ -50,11 +51,10 @@ function registerMiddleware() {
     }));
     app.use(express.static(path.join(__dirname, '/public')));
     // app.use(morgan('dev'));
-    app.use( function (req, res, next) {
-        let trackingHeader = _.find(_.keys(req.headers), (hdr) => {
-            return hdr.toLowerCase() === 'requestid'
-        });
+    const logRequest = (req, res, next) => {
+        let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
         if (trackingHeader) {
+            requestTimes[req.headers[trackingHeader]] = new Date().getTime();
             logger.info('--------------------------------------------------');
             logger.info('Got request');
             logger.info(`${'REQUESTID'.padEnd(10)}: ${req.headers[trackingHeader]}`);
@@ -64,17 +64,19 @@ function registerMiddleware() {
             switch (req.method) {
                 case 'GET':
                 case 'DELETE':
-                    logger.info('PARAMS:');
+                    logger.info(`${'PARAMS'.padEnd(10)}:`);
                     _.each(_.keys(req.query), (param) => {
                         if (param.length > maxKeyLength) {
                             maxKeyLength = param.length;
                         }
                     });
                     _.each(_.keys(req.query), (param) => {
-                        if (req.query[param] instanceof Object) {
-                            logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.query[param].id}`)
-                        } else {
-                            logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.query[param]}`)
+                        if (param !== 'password') {
+                            if (req.query[param] instanceof Object) {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.query[param].id}`)
+                            } else {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.query[param]}`)
+                            }
                         }
                     });
                     break;
@@ -87,10 +89,12 @@ function registerMiddleware() {
                         }
                     });
                     _.each(_.keys(req.body), (param) => {
-                        if (req.body[param] instanceof Object) {
-                            logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.body[param].id}`)
-                        } else {
-                            logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.body[param]}`)
+                        if (param !== 'password') {
+                            if (req.body[param] instanceof Object) {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.body[param].id}`)
+                            } else {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.body[param]}`)
+                            }
                         }
                     });
                     break;
@@ -98,7 +102,60 @@ function registerMiddleware() {
             logger.info('--------------------------------------------------');
         }
         next()
-    })
+    };
+    const logResponse = (req, res, next) => {
+        let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
+        if (trackingHeader) {
+            let oldWrite = res.write,
+                oldEnd = res.end;
+            let chunks = [];
+            res.write = function (chunk) {
+                chunks.push(chunk);
+                oldWrite.apply(res, arguments);
+            };
+            res.end = function (chunk) {
+                if (chunk) {
+                    chunks.push(chunk);
+                }
+                let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
+                if (trackingHeader) {
+                    let body = Buffer.concat(chunks).toString('utf8');
+                    try {
+                        logger.info('--------------------------------------------------');
+                        logger.info('Got response');
+                        logger.info(`${'REQUESTID'.padEnd(10)}: ${req.headers[trackingHeader]}`);
+                        logger.info(`${'URL'.padEnd(10)}: ${req.url.padEnd(10)}`);
+                        logger.info(`${'METHOD'.padEnd(10)}: ${req.method.padEnd(10)}`);
+                        logger.info(`${'TIME'.padEnd(10)}: ${new Date().getTime() - requestTimes[req.headers[trackingHeader]]} ms`)
+                        logger.info(`${'BODY'.padEnd(10)}:`);
+                        let parsedBody = JSON.parse(body);
+                        let maxKeyLength = 0;
+                        _.each(_.keys(parsedBody), (param) => {
+                            if (param.length > maxKeyLength) {
+                                maxKeyLength = param.length;
+                            }
+                        });
+                        _.each(_.keys(parsedBody), (param) => {
+                            if (parsedBody[param] instanceof Array) {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param].length} entries`)
+                            } else if (parsedBody[param] instanceof Object) {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]._id}`)
+                            } else {
+                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]}`)
+                            }
+                        });
+                    } catch (e) {
+                        logger.info(`Unparsable response body ${body}`)
+                    }
+                    logger.info('--------------------------------------------------');
+                }
+                oldEnd.apply(res, arguments);
+            };
+        }
+        next()
+    };
+    app.use(logRequest);
+    app.use(logResponse)
 }
 
 function onRegisterRoutes() {
