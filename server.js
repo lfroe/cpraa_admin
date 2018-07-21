@@ -16,20 +16,14 @@ const registrationEntryController = require('./app/controllers/registrationEntry
 const statusController = require('./app/controllers/statusController');
 
 const connectWithRetry = () => {
-    mongoose.connect(config.dbURI, {
-        server        : {
-            socketOptions: {
-                socketTimeoutMS  : 0,
-                connectionTimeout: 0
-            }
-        },
-        user          : config.dbUser,
-        pass          : config.dbPass,
-        useMongoClient: true
+    mongoose.connect(`mongodb://${encodeURIComponent(config.dbUser)}:${encodeURIComponent(config.dbPass)}@${config.dbURI}`, {
+        socketTimeoutMS  : 0,
+        connectionTimeout: 0,
+        useMongoClient   : true
     }, (err) => {
         if (err) {
-            logger.error(`failed to connect to ${config.dbURI}`);
-            setTimeout(connectWithRetry, 1000);
+            console.log(`failed to connect to ${config.dbURI}`);
+            setTimeout(connectWithRetry, 1000)
         }
     });
 };
