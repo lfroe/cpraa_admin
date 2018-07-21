@@ -1,9 +1,9 @@
 module.exports = () => {
     const pusherConfig = {
         appId: '464450',
-        key: '9dc09ccbf2cf278d932f',
-        secret: '748d9be0da2fad72e4e0',
-        host: 'slanger.cepraa.at',
+        key: '5100082a89f911e89a94',
+        secret: '61ba0f1c89f911e89a91',
+        host: 'localhost',
         port: 4567,
         encrypted: false
     };

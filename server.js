@@ -17,14 +17,15 @@ const statusController = require('./app/controllers/statusController');
 
 const connectWithRetry = () => {
     mongoose.connect(config.dbURI, {
-        server: {
+        server        : {
             socketOptions: {
-                socketTimeoutMS: 0,
+                socketTimeoutMS  : 0,
                 connectionTimeout: 0
             }
         },
-        user: config.dbUser,
-        pass: config.dbPass
+        user          : config.dbUser,
+        pass          : config.dbPass,
+        useMongoClient: true
     }, (err) => {
         if (err) {
             logger.error(`failed to connect to ${config.dbURI}`);
@@ -39,12 +40,12 @@ function registerMiddleware() {
     let requestTimes = {};
     app.use(cors({
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
-        origin: '*'
+        origin        : '*'
     }));
     app.set('superSecret', config.secret);
     app.use(bodyParser.urlencoded({
         extended: false,
-        limit: '15mb'
+        limit   : '15mb'
     }));
     app.use(bodyParser.json({
         limit: '15mb'
@@ -160,9 +161,9 @@ function registerMiddleware() {
 
 function onRegisterRoutes() {
     hydraExpress.registerRoutes({
-        '/api/scheduleEntries': scheduleEntryController,
+        '/api/scheduleEntries'    : scheduleEntryController,
         '/api/registrationEntries': registrationEntryController,
-        '/api/status': statusController
+        '/api/status'             : statusController
     });
 
 }
