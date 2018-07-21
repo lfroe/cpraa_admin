@@ -10,7 +10,7 @@ module.exports = () => {
     let config = '';
     const defaultConf = {
         secret        : '?D7wPLY2\=z3',
-        dbURI         : 'mongodb://127.0.0.1:27017/admn',
+        dbURI         : '127.0.0.1:27017/admn',
         dbUser        : 'cpraa_admin',
         dbPass        : 'quengetz!*2412',
         rights        : [],
