@@ -7,8 +7,7 @@ module.exports = () => {
         port: 4567,
         encrypted: false
     };
-    let config = '';
-    const defaultConf = {
+    return {
         secret        : '?D7wPLY2\=z3',
         dbURI         : '127.0.0.1:27017/admn',
         dbUser        : 'cpraa_admin',
@@ -44,10 +43,4 @@ module.exports = () => {
         smtpSettings  : undefined,
         pusherConfig  : pusherConfig
     };
-    try {
-        config = require('/data1/conf/admin/config.js');
-    } catch (err) {
-        config = defaultConf
-    }
-    return config;
 };

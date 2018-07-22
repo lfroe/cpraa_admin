@@ -8,7 +8,7 @@ const mshelper         = require('@v3rg1l/microservice-helper').requestHelper;
 const utils            = require('@v3rg1l/microservice-helper').utilService;
 const mongoose         = require('mongoose');
 
-const Config= require('../../config'),
+const Config= require(`../../config.${process.env.NODE_ENV}`),
       config= Config();
 const _     = require('lodash');
 const Pusher= require('pusher'),
