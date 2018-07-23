@@ -134,7 +134,8 @@ module.exports = {
             logger.info('Couldn\'t get scheduleEntries from admin-service. Something is terribly, terribly wrong');
             scheduleData = {entries: []};
         }
-        const testRequests = scheduleData.entries.length > 0 ? scheduleData.entries.map(async (scheduleEntry) => {
+        const relevantScheduleEntries = _.filter(scheduleData.entries, (entry) => (['finished', 'stopped'].indexOf(entry.status) < 0));
+        const testRequests = relevantScheduleEntries.length > 0 ? relevantScheduleEntries.map(async (scheduleEntry) => {
             const testData = await mshelper.sendServiceRequest('admin-service',
                 '/gate/routeRequest/create-service/api/testmanagement/test/name', 'get',
                 {}, {id: scheduleEntry.testId}, {'x-access-token': token});
