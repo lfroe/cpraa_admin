@@ -6,7 +6,6 @@ const path = require('path');
 const Config = require('./config'),
     config = Config();
 const utils = require('@v3rg1l/microservice-helper').utilService;
-const logger = utils.getLogger('admin-service-info', config.logPath);
 const cors = require('cors');
 const _ = require('lodash');
 const hydraExpress = require('hydra-express');
@@ -48,6 +47,7 @@ function registerMiddleware() {
     app.use(express.static(path.join(__dirname, '/public')));
     // app.use(morgan('dev'));
     const logRequest = (req, res, next) => {
+        const logger = utils.getLogger('admin-service-info', config.logPath);
         let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
         if (trackingHeader) {
             requestTimes[req.headers[trackingHeader]] = new Date().getTime();
@@ -100,6 +100,7 @@ function registerMiddleware() {
         next()
     };
     const logResponse = (req, res, next) => {
+        const logger = utils.getLogger('admin-service-info', config.logPath);
         let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
         if (trackingHeader) {
             let oldWrite = res.write,
@@ -132,12 +133,14 @@ function registerMiddleware() {
                             }
                         });
                         _.each(_.keys(parsedBody), (param) => {
-                            if (parsedBody[param] instanceof Array) {
-                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param].length} entries`)
-                            } else if (parsedBody[param] instanceof Object) {
-                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]._id}`)
-                            } else {
-                                logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]}`)
+                            if (excludeFromLog.indexOf(param) < 0) {
+                                if (parsedBody[param] instanceof Array) {
+                                    logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param].length} entries`)
+                                } else if (parsedBody[param] instanceof Object) {
+                                    logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]._id}`)
+                                } else {
+                                    logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${parsedBody[param]}`)
+                                }
                             }
                         });
                     } catch (e) {
@@ -164,7 +167,7 @@ function onRegisterRoutes() {
 }
 
 hydraExpress.init(config.hydraConfig, '', onRegisterRoutes, registerMiddleware).then((serviceInfo) => {
-    logger.info('serviceInfo', serviceInfo);
+    console.log('serviceInfo', serviceInfo);
 }).catch((err) => {
-    logger.error('err', err);
+    console.oog('err', err);
 });
