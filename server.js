@@ -32,6 +32,7 @@ connectWithRetry();
 function registerMiddleware() {
     const app = hydraExpress.getExpressApp();
     let requestTimes = {};
+    const excludeFromLog = ['password', 'token'];
     app.use(cors({
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-access-token', 'impersonation-token'],
         origin        : '*'
@@ -66,7 +67,7 @@ function registerMiddleware() {
                         }
                     });
                     _.each(_.keys(req.query), (param) => {
-                        if (param !== 'password') {
+                        if (excludeFromLog.indexOf(param) < 0) {
                             if (req.query[param] instanceof Object) {
                                 logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.query[param].id}`)
                             } else {
@@ -84,7 +85,7 @@ function registerMiddleware() {
                         }
                     });
                     _.each(_.keys(req.body), (param) => {
-                        if (param !== 'password') {
+                        if (excludeFromLog.indexOf(param) < 0) {
                             if (req.body[param] instanceof Object) {
                                 logger.info(` ${param.padEnd(maxKeyLength + 1)}: ${req.body[param].id}`)
                             } else {
