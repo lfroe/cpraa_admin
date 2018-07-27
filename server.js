@@ -46,6 +46,7 @@ function registerMiddleware() {
     }));
     app.use(express.static(path.join(__dirname, '/public')));
     // app.use(morgan('dev'));
+    // *** for jenkins test
     const logRequest = (req, res, next) => {
         const logger = utils.getLogger('admin-service-info', config.logPath);
         let trackingHeader = _.find(_.keys(req.headers), (hdr) => hdr.toLowerCase() === 'requestid');
