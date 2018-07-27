@@ -6,11 +6,11 @@ const RegistrationEntry = require('../models/registrationEntry');
 const registrationEntryService = require('./registrationEntryService');
 const moment = require('moment');
 const mshelper = require('@v3rg1l/microservice-helper').requestHelper;
-const utils = require('@v3rg1l/microservice-helper').utilService;
 const Config = require('../../config'),
       config = Config();
 const _ = require('lodash');
-const logger = utils.getLogger('perform', config.logPath);
+let utils = require('@v3rg1l/microservice-helper').utilService;
+let logger = utils.getLogger('perform', config.logPath);
 const Pusher = require('pusher'),
       pusher = new Pusher(config.pusherConfig);
 

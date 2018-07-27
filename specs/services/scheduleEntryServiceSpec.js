@@ -31,12 +31,12 @@ before(done => {
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
-    console.log('calling done() function')
+    console.log('calling done() function');
     done()
 });
 beforeEach(done => {
     mongoose.connection.collections.scheduleentries.drop(() => {
-        console.log('also calling done function')
+        console.log('also calling done function');
         done();
     });
 });
@@ -44,6 +44,7 @@ describe('scheduleEntry save', () => {
     it('try to save schedule entry => success', async () => {
         const requestData = {
             user         : '5998619578bf532030c64981',
+
             start        : new Date(),
             end          : new Date(),
             schoolClassId: '5777619578bf532030c64981',
