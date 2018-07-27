@@ -20,11 +20,10 @@ const utilServiceMock = {
     }
 };
 mongoose.Promise = require('bluebird');
-before(() => {
+before(done => {
     mockgoose.prepareStorage().then(() => {
-        if (mongoose.connection.db) return done();
-        mongoose.connect('mongodb://localhost/admn', {}, err => {
-            console.log('Error occurred while trying to connect to mongo', err)
+        mongoose.connect('mongodb://example.com/TestingDB', (err) => {
+            done(err);
         });
     });
     scheduleEntryService.__set__({
@@ -37,12 +36,12 @@ after(() => {
         mockgoose.connection.close();
     }
 });
-// beforeEach(done => {
-//     mongoose.connection.collections.scheduleentries.drop(() => {
-//         console.log('also calling done function');
-//         done();
-//     });
-// });
+beforeEach(done => {
+    mongoose.connection.collections.scheduleentries.drop(() => {
+        console.log('also calling done function');
+        done();
+    });
+});
 describe('scheduleEntry save', () => {
     it('try to save schedule entry => success', async () => {
         const requestData = {
