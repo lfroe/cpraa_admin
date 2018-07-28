@@ -27,8 +27,9 @@ before(done => {
         logger: utilServiceMock.getLogger()
     });
     console.log('Mocking shit');
+    console.log(mockgoose)
     mockgoose.prepareStorage().then(() => {
-        console.log('After prepare storage')
+        console.log('After prepare storage');
         mongoose.connect('mongodb://example.com/TestingDB', function(err) {
             console.log('Connection...');
             done(err);
