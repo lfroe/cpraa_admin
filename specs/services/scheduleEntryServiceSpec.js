@@ -25,11 +25,11 @@ before(done => {
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
-    mockgoose.prepareStorage().then(function() {
+    mockgoose.prepareStorage().then(() => {
         mongoose.connect('mongodb://example.com/TestingDB', function(err) {
             done(err);
         });
-    });
+    }).catch(error => done(error));
 });
 
 describe('scheduleEntry save', () => {
