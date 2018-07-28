@@ -20,20 +20,15 @@ const utilServiceMock = {
     }
 };
 mongoose.Promise = require('bluebird');
-before((done) => {
+before(done => {
     scheduleEntryService.__set__({
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
-    mockgoose.prepareStorage().then(() => {
-        mongoose.connect('mongodb://localhost/admin', (err) => {
+    mockgoose.prepareStorage().then(function() {
+        mongoose.connect('mongodb://example.com/TestingDB', function(err) {
             done(err);
         });
-    });
-});
-after(done => {
-    mockgoose.helper.reset().then(() => {
-        done()
     });
 });
 
