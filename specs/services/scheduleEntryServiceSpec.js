@@ -22,7 +22,6 @@ const utilServiceMock = {
 mongoose.Promise = require('bluebird');
 before(async() => {
     console.log('In before');
-    this.timeout(120000);
     scheduleEntryService.__set__({
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
