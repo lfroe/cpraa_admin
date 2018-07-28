@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "test-without-coverage": "mocha --timeout 120000 specs/**/*.js",
+    "test-without-coverage": "mocha --timeout 600000 specs/**/*.js",
     "test-with-coverage": "nyc --reporter=text --reporter=lcovonly --reporter=cobertura mocha --timeout 120000000 specs/**/*.js",
     "test": "nyc --reporter=text --reporter=lcovonly --reporter=html mocha --timeout 120000000 specs/**/*.js && open ./coverage/index.html"
   }
