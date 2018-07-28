@@ -20,7 +20,7 @@ const utilServiceMock = {
     }
 };
 mongoose.Promise = require('bluebird');
-before(async() => {
+before(function(done) {
     console.log('In before');
     scheduleEntryService.__set__({
         utils : utilServiceMock,
@@ -28,16 +28,18 @@ before(async() => {
     });
     console.log('Mocking shit');
     console.log(mockgoose)
-    try {
-        await mockgoose.prepareStorage();
-        await mongoose.connect('mongodb://localhost')
-    } catch (err) {
-        console.log(err)
-    }
+        mockgoose.prepareStorage().then(() => {
+            mongoose.connect('mongodb://localhost').then((err) => {
+                done(err)
+            })
+        }).catch(function (err) {
+            done(err)
+        });
 });
 
 describe('scheduleEntry save', () => {
-    it('try to save schedule entry => success', async () => {
+    it('try to save schedule entry => success', function(done) {
+        this.timeout(120000);
         const requestData = {
             user         : '5998619578bf532030c64981',
 
@@ -48,14 +50,20 @@ describe('scheduleEntry save', () => {
             title        : 'some title',
             eventId      : '12345'
         };
-        const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
-        assert.isDefined(result.scheduleEntry);
-        expect(result.scheduleEntry).to.have.property('_id');
-        assert.strictEqual(result.scheduleEntry.title, 'some title')
+        scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'}).then(function(result) {
+            assert.isDefined(result.scheduleEntry);
+            expect(result.scheduleEntry).to.have.property('_id');
+            assert.strictEqual(result.scheduleEntry.title, 'some title')
+            done()
+        }).catch(function (err) {
+            done(err)
+        });
+
     });
 });
 describe('scheduleEntry deletion', () => {
-   it('try to delete schedule entry => success', async () => {
+   it('try to delete schedule entry => success', function (done) {
+       this.timeout(120000);
        const requestData = {
            user         : '5998619578bf532030c64981',
            start        : new Date(),
@@ -65,10 +73,20 @@ describe('scheduleEntry deletion', () => {
            title        : 'some title',
            eventId      : '12345'
        };
-       const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
-       assert.isDefined(result.scheduleEntry);
-       await scheduleEntryService.delete(result.scheduleEntry._id);
-       const se = await ScheduleEntry.findOne({ _id: result.scheduleEntry._id });
-       assert.isNull(se);
+       scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'}).then((result) => {
+           assert.isDefined(result.scheduleEntry);
+           scheduleEntryService.delete(result.scheduleEntry._id).then(() => {
+               ScheduleEntry.findOne({ _id: result.scheduleEntry._id }).then((se) => {
+                   assert.isNull(se);
+                   done()
+               }).catch(function (err) {
+                   done(err)
+               });
+           }).catch(function (err) {
+               done(err)
+           });
+       }).catch(function (err) {
+           done(err)
+       });
    })
 });
