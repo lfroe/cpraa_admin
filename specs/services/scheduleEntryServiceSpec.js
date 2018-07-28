@@ -20,7 +20,7 @@ const utilServiceMock = {
     }
 };
 mongoose.Promise = require('bluebird');
-before(done => {
+before(async() => {
     console.log('In before');
     this.timeout(120000);
     scheduleEntryService.__set__({
@@ -29,13 +29,12 @@ before(done => {
     });
     console.log('Mocking shit');
     console.log(mockgoose)
-    mockgoose.prepareStorage().then(() => {
-        console.log('After prepare storage');
-        mongoose.connect('mongodb://example.com/TestingDB', function(err) {
-            console.log('Connection...');
-            done(err);
-        });
-    }).catch(error => done(error));
+    try {
+        await mockgoose.prepareStorage();
+        await mongoose.connect('mongodb://localhost')
+    } catch (err) {
+        console.log(err)
+    }
 });
 
 describe('scheduleEntry save', () => {
