@@ -28,7 +28,8 @@ before(function(done) {
     });
     console.log('Mocking shit');
     console.log(mockgoose);
-        mockgoose.prepareStorage().then(() => {
+    mockgoose.helper.setDbVersion('3.2.1');
+    mockgoose.prepareStorage().then(() => {
             mongoose.connect('mongodb://localhost').then((err) => {
                 done(err)
             })
@@ -63,7 +64,6 @@ describe('scheduleEntry save', () => {
 });
 describe('scheduleEntry deletion', () => {
     it('try to delete schedule entry => success', async () => {
-        this.timeout(120000);
         const requestData = {
             user         : '5998619578bf532030c64981',
             start        : new Date(),
@@ -75,8 +75,8 @@ describe('scheduleEntry deletion', () => {
         };
         const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'})
         assert.isDefined(result.scheduleEntry);
-        scheduleEntryService.delete(result.scheduleEntry._id)
-        const se = ScheduleEntry.findOne({_id: result.scheduleEntry._id})
+        await scheduleEntryService.delete(result.scheduleEntry._id)
+        const se = await ScheduleEntry.findOne({_id: result.scheduleEntry._id})
         assert.isNull(se);
     })
 });
