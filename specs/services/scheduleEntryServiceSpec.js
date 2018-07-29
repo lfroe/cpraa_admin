@@ -27,8 +27,6 @@ before(function(done) {
         logger: utilServiceMock.getLogger()
     });
     console.log('Mocking shit');
-    console.log(mockgoose);
-    mockgoose.helper.setDbVersion('3.2.1');
     mockgoose.prepareStorage().then(() => {
             mongoose.connect('mongodb://localhost').then((err) => {
                 done(err)
