@@ -8,6 +8,7 @@ parserOptions:
 env:
   amd: true
   browser: true
+  mocha: true
   es6: true
   jquery: true
   node: true

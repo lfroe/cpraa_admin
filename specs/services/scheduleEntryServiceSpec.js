@@ -20,28 +20,46 @@ const utilServiceMock = {
     }
 };
 mongoose.Promise = require('bluebird');
-before(done => {
-    mockgoose.prepareStorage().then(() => {
-        if (mongoose.connection.db) return done();
-        mongoose.connect('mongodb://localhost/admn', {}, err => {
-            console.log('Error occurred while trying to connect to mongo', err)
-        });
-    });
+before(function(done) {
     scheduleEntryService.__set__({
         utils : utilServiceMock,
         logger: utilServiceMock.getLogger()
     });
-    console.log('calling done() function')
+    mockgoose.prepareStorage().then(() => {
+            mongoose.connect('mongodb://localhost').then((err) => {
+                done(err)
+            })
+        }).catch(function (err) {
+            done(err)
+        });
+});
+after((done) => {
+    mockgoose.helper.reset();
     done()
 });
-beforeEach(done => {
-    mongoose.connection.collections.scheduleentries.drop(() => {
-        console.log('also calling done function')
-        done();
-    });
-});
+
 describe('scheduleEntry save', () => {
     it('try to save schedule entry => success', async () => {
+        const requestData = {
+            user: '5998619578bf532030c64981',
+            start        : new Date(),
+            end          : new Date(),
+            schoolClassId: '5777619578bf532030c64981',
+            testId       : '5998888878bf532030c64981',
+            title        : 'some title',
+            eventId      : '12345'
+        };
+        const result = await scheduleEntryService.save(requestData, {
+            username: 'lufr',
+            _id     : '5998619578bf532030c64981'
+        });
+        assert.isDefined(result.scheduleEntry);
+        expect(result.scheduleEntry).to.have.property('_id');
+        assert.strictEqual(result.scheduleEntry.title, 'some title')
+    });
+});
+describe('scheduleEntry deletion', () => {
+    it('try to delete schedule entry => success', async () => {
         const requestData = {
             user         : '5998619578bf532030c64981',
             start        : new Date(),
@@ -51,27 +69,10 @@ describe('scheduleEntry save', () => {
             title        : 'some title',
             eventId      : '12345'
         };
-        const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
+        const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'})
         assert.isDefined(result.scheduleEntry);
-        expect(result.scheduleEntry).to.have.property('_id');
-        assert.strictEqual(result.scheduleEntry.title, 'some title')
-    });
-});
-describe('scheduleEntry deletion', () => {
-   it('try to delete schedule entry => success', async () => {
-       const requestData = {
-           user         : '5998619578bf532030c64981',
-           start        : new Date(),
-           end          : new Date(),
-           schoolClassId: '5777619578bf532030c64981',
-           testId       : '5998888878bf532030c64981',
-           title        : 'some title',
-           eventId      : '12345'
-       };
-       const result = await scheduleEntryService.save(requestData, {username: 'lufr', _id: '5998619578bf532030c64981'});
-       assert.isDefined(result.scheduleEntry);
-       await scheduleEntryService.delete(result.scheduleEntry._id);
-       const se = await ScheduleEntry.findOne({ _id: result.scheduleEntry._id });
-       assert.isNull(se);
-   })
+        await scheduleEntryService.delete(result.scheduleEntry._id)
+        const se = await ScheduleEntry.findOne({_id: result.scheduleEntry._id})
+        assert.isNull(se);
+    })
 });
