@@ -15,7 +15,7 @@ module.exports = () => {
         dbPass        : 'quengetz!*2412',
         rights        : [],
         PORT          : 45031,
-        FRONTEND_URL  : 'http://localhost:3001',
+        FRONTEND_URL  : 'http://localhost',
         logPath       : '/data1/logs',
         passwordPolicy: {
             length: {
