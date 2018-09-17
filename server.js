@@ -22,7 +22,7 @@ const connectWithRetry = () => {
     }, (err) => {
         if (err) {
             console.log(`failed to connect to ${config.dbURI}`);
-            setTimeout(connectWithRetry, 1000)
+            setTimeout(connectWithRetry, 1000);
         }
     });
 };
